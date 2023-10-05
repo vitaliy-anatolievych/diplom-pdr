@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="bg_ui_sector">#796465</color>
+    <color name="selected_color">#87AA75</color>
+    <color name="card_bg">#97B5D7</color>
+    <color name="green_bg">#87AA75</color>
+    <color name="gray_bg">#D8D8D8</color>
+    <color name="lighting_blue_bg">#8DAED0</color>
+</resources>

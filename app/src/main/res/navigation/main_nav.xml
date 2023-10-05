@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/rulesScreen">
+
+    <fragment
+        android:id="@+id/rulesScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.RulesScreen"
+        android:label="Правила"
+        tools:layout="@layout/fragment_rules" >
+        <action
+            android:id="@+id/action_rulesScreen_to_webScreen"
+            app:destination="@id/webScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/driveScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.DriveScreen"
+        android:label="fragment_drive"
+        tools:layout="@layout/fragment_drive" >
+        <action
+            android:id="@+id/action_driveScreen_to_resultDriveScreen"
+            app:destination="@id/resultDriveScreen" />
+        <action
+            android:id="@+id/action_driveScreen_to_statsScreen"
+            app:destination="@id/statsScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.ProfileScreen"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileScreen_to_testStatsScreen"
+            app:destination="@id/testStatsScreen" />
+        <action
+            android:id="@+id/action_profileScreen_to_statsScreen"
+            app:destination="@id/statsScreen" />
+        <action
+            android:id="@+id/action_profileScreen_to_faqScreen"
+            app:destination="@id/faqScreen" />
+        <action
+            android:id="@+id/action_profileScreen_to_rewardScreen"
+            app:destination="@id/rewardScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/testsScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.TestsScreen"
+        android:label="fragment_tests"
+        tools:layout="@layout/fragment_tests" >
+        <action
+            android:id="@+id/action_testsScreen_to_testStatsScreen"
+            app:destination="@id/testStatsScreen" />
+        <action
+            android:id="@+id/action_testsScreen_to_themesScreen"
+            app:destination="@id/themesScreen" />
+        <action
+            android:id="@+id/action_testsScreen_to_taskScreen"
+            app:destination="@id/taskScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/webScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.WebScreen"
+        android:label="fragment_web"
+        tools:layout="@layout/fragment_web" >
+        <argument
+            android:name="link"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultDriveScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.ResultDriveScreen"
+        android:label="fragment_drive_result"
+        tools:layout="@layout/fragment_drive_result" >
+        <action
+            android:id="@+id/action_resultDriveScreen_to_statsScreen"
+            app:destination="@id/statsScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/statsScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.StatsScreen"
+        android:label="fragment_stats"
+        tools:layout="@layout/fragment_stats" >
+        <action
+            android:id="@+id/action_statsScreen_to_averageStatsScreen"
+            app:destination="@id/averageStatsScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/averageStatsScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.AverageStatsScreen"
+        android:label="fragment_average_stats"
+        tools:layout="@layout/fragment_average_stats" />
+    <fragment
+        android:id="@+id/testStatsScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.TestStatsScreen"
+        android:label="fragment_tests_stats"
+        tools:layout="@layout/fragment_tests_stats" />
+    <fragment
+        android:id="@+id/faqScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.FaqScreen"
+        android:label="fragment_faq"
+        tools:layout="@layout/fragment_faq" />
+    <fragment
+        android:id="@+id/rewardScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.RewardScreen"
+        android:label="fragment_rewards"
+        tools:layout="@layout/fragment_rewards" />
+    <fragment
+        android:id="@+id/themesScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.ThemesScreen"
+        android:label="fragment_themes"
+        tools:layout="@layout/fragment_themes" >
+        <action
+            android:id="@+id/action_themesScreen_to_taskScreen"
+            app:destination="@id/taskScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/taskScreen"
+        android:name="com.diplom.diplom_pdr.presentation.screens.TaskScreen"
+        android:label="fragment_task"
+        tools:layout="@layout/fragment_task" />
+
+</navigation>
