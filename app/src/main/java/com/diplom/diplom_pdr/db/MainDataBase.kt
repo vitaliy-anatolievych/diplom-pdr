@@ -10,10 +10,14 @@ import com.diplom.diplom_pdr.models.DriveStatsModel
 import com.diplom.diplom_pdr.models.TaskItem
 import com.diplom.diplom_pdr.models.TestsResultEntity
 import com.diplom.diplom_pdr.models.ThemeItem
+import com.diplom.diplom_pdr.models.UserEntity
 
 @TypeConverters(RoomTypeConverters::class)
-@Database(entities = [TaskItem::class, ThemeItem::class, TestsResultEntity::class, DriveStatsModel::class, Answer::class], version = 1)
-abstract class MainDataBase: RoomDatabase() {
+@Database(
+    entities = [TaskItem::class, ThemeItem::class, TestsResultEntity::class, DriveStatsModel::class, Answer::class, UserEntity::class],
+    version = 1
+)
+abstract class MainDataBase : RoomDatabase() {
 
     abstract fun getDao(): Dao
 
