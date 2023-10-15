@@ -123,16 +123,12 @@ class MainViewModel(
 
             Log.e("TESTS", "$totalRightAnswers | $totalWrongAnswers")
 
-            if (totalRightAnswers != 0 && totalWrongAnswers != 0) {
+            if (totalRightAnswers != 0) {
                 val result =  (totalRightAnswers.toFloat() / (totalRightAnswers + totalWrongAnswers)) * 100
                 testResult.percentRightAnswers = result.toInt()
                 Log.e("TESTS", "${testResult.percentRightAnswers} | $result")
             } else {
-                if (totalRightAnswers > 0) {
-                    testResult.percentRightAnswers = 100
-                } else {
-                    testResult.percentRightAnswers = 0
-                }
+                testResult.percentRightAnswers = 0
             }
 
 
