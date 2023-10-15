@@ -76,6 +76,27 @@
         <action
             android:id="@+id/action_resultDriveScreen_to_statsScreen"
             app:destination="@id/statsScreen" />
+        <argument
+            android:name="distance"
+            app:argType="string" />
+        <argument
+            android:name="excessiveSpeed"
+            app:argType="integer" />
+        <argument
+            android:name="emergencySlowDown"
+            app:argType="integer" />
+        <argument
+            android:name="startTime"
+            app:argType="string" />
+        <argument
+            android:name="endTime"
+            app:argType="string" />
+        <argument
+            android:name="medianSpeed"
+            app:argType="integer" />
+        <argument
+            android:name="excessOver20"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/statsScreen"
@@ -119,6 +140,10 @@
         android:id="@+id/taskScreen"
         android:name="com.diplom.diplom_pdr.presentation.screens.TaskScreen"
         android:label="fragment_task"
-        tools:layout="@layout/fragment_task" />
+        tools:layout="@layout/fragment_task" >
+        <argument
+            android:name="task_item"
+            app:argType="com.diplom.diplom_pdr.models.TaskItem[]" />
+    </fragment>
 
 </navigation>

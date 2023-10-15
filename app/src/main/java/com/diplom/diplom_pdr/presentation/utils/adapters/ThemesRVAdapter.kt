@@ -8,47 +8,56 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.diplom.diplom_pdr.R
 import com.diplom.diplom_pdr.databinding.ItemThemeBinding
-import com.diplom.diplom_pdr.models.ThemeItem
+import com.diplom.diplom_pdr.models.TaskItem
+import com.diplom.diplom_pdr.models.ThemeItemWithTasks
 
-class ThemesRVAdapter: ListAdapter<ThemeItem, ThemesRVAdapter.ThemesViewHolder>(DiffCallBack()) {
+class ThemesRVAdapter: ListAdapter<ThemeItemWithTasks, ThemesRVAdapter.ThemesViewHolder>(DiffCallBack()) {
 
-    private var clickListener: ((ThemeItem) -> Unit)? = null
+    private var clickListener: ((List<TaskItem>) -> Unit)? = null
+
+    override fun onCurrentListChanged(
+        previousList: MutableList<ThemeItemWithTasks>,
+        currentList: MutableList<ThemeItemWithTasks>
+    ) {
+        notifyDataSetChanged()
+        super.onCurrentListChanged(previousList, currentList)
+    }
 
     inner class ThemesViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         private val binding = ItemThemeBinding.bind(view)
 
-        fun bind(model: ThemeItem) = with(binding) {
-            title.text = model.title
-            valueRightAnswers.text = "${model.rightAnswers}"
-            valueAllQuestions.text = "${model.allQuestion}"
+        fun bind(model: ThemeItemWithTasks) = with(binding) {
+            title.text = model.themeItem.title
+            valueRightAnswers.text = "${model.themeItem.rightAnswers}"
+            valueAllQuestions.text = "${model.taskItem.size}"
 
-            if (model.isStarted) {
+            if (model.themeItem.isStarted) {
                 btnNext.visibility = View.VISIBLE
 
 
                 btnNext.setOnClickListener {
-                    clickListener?.invoke(model)
+                    clickListener?.invoke(model.taskItem)
                 }
             }
 
             btnTheme.setOnClickListener {
-                clickListener?.invoke(model)
+                clickListener?.invoke(model.taskItem)
             }
         }
     }
 
-    fun onTaskClick(listener: (ThemeItem) -> Unit) {
+    fun onTaskClick(listener: (List<TaskItem>) -> Unit) {
         clickListener = listener
     }
 
-    class DiffCallBack : DiffUtil.ItemCallback<ThemeItem>() {
-        override fun areItemsTheSame(oldItem: ThemeItem, newItem: ThemeItem): Boolean {
-            return oldItem.id == newItem.id
+    class DiffCallBack : DiffUtil.ItemCallback<ThemeItemWithTasks>() {
+        override fun areItemsTheSame(oldItem: ThemeItemWithTasks, newItem: ThemeItemWithTasks): Boolean {
+            return oldItem.themeItem.id == newItem.themeItem.id
         }
 
         override fun areContentsTheSame(
-            oldItem: ThemeItem,
-            newItem: ThemeItem
+            oldItem: ThemeItemWithTasks,
+            newItem: ThemeItemWithTasks
         ): Boolean {
             return oldItem == newItem
         }

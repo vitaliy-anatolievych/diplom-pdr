@@ -15,3 +15,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Diplom_PDR"
 include ':app'
+include ':feauture-trip'
+include ':feauture-trip:data'
+include ':feauture-trip:domain'

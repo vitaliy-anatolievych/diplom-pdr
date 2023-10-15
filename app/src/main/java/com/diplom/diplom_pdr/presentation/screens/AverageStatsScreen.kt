@@ -1,18 +1,23 @@
 package com.diplom.diplom_pdr.presentation.screens
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.diplom.diplom_pdr.R
 import com.diplom.diplom_pdr.databinding.FragmentAverageStatsBinding
+import com.diplom.diplom_pdr.presentation.utils.viewmodels.MainViewModel
 
-class AverageStatsScreen: Fragment(R.layout.fragment_average_stats) {
+class AverageStatsScreen : Fragment() {
 
     private var _binding: FragmentAverageStatsBinding? = null
     private val binding: FragmentAverageStatsBinding
         get() = _binding ?: throw NullPointerException("FragmentAverageStatsBinding is null")
+
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,8 +27,31 @@ class AverageStatsScreen: Fragment(R.layout.fragment_average_stats) {
         _binding = FragmentAverageStatsBinding.inflate(inflater, container, false)
 
         with(binding) {
-            tvDistance.text = String.format(getString(R.string.s_km), "0")
-            tvAverageDistance.text = String.format(getString(R.string.s_km_hour), "0")
+
+            var averageDistance = 0.0
+            var averageSpeed = 0
+            var excessiveSpeed = 0
+            var emergencySlowDown = 0
+            viewModel.driveStatsData.observe(viewLifecycleOwner) { list ->
+                for (id in list.indices) {
+                    averageDistance += list[id].distance
+                    averageSpeed += list[id].averageSpeed
+                    excessiveSpeed += list[id].countOfExcessiveSpeed
+                    emergencySlowDown += list[id].countOfEmergencyDown
+                }
+
+                averageDistance /= list.size
+                averageSpeed /= list.size // TODO чі правильна середня швидкість?
+
+                tvDistance.text =
+                    String.format(getString(R.string.s_km), String.format("%.1f", averageDistance))
+                tvAverageDistance.text =
+                    String.format(getString(R.string.s_km_hour), "$averageSpeed")
+                tvExcessiveSpeed.text = "$excessiveSpeed"
+                tvEmergencySlowDown.text = "$emergencySlowDown"
+            }
+
+
         }
 
         return binding.root

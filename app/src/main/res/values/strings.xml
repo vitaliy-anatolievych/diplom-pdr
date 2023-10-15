@@ -55,7 +55,7 @@
     <string name="desc_distance">Дистанція поїздки</string>
     <string name="desc_average_distance">Середня швидкість поїздки</string>
     <string name="s_km_hour">%s\nкм/год</string>
-    <string name="desc_excessive_speed">Кількість перевищень швидкості понад 20 км</string>
+    <string name="desc_excessive_speed">Середня кількість перевищень швидкості</string>
     <string name="desc_emergency_down">Кільність екстренних гальмувать</string>
     <string name="global_stats">Загальна статистика</string>
     <string name="reset_progress">Скинути прогресс</string>
@@ -75,4 +75,10 @@
     <string name="all_questions">Усього питань</string>
     <string name="continues">Продовжити</string>
     <string name="question">Питання</string>
+    <string name="tasks_completed">Тестування завершено</string>
+    <string name="average_excessive_speed">Середня кількість прискореннь</string>
+    <string name="over_20">Кількість перевищень швидкості</string>
+    <string name="over_speed">Кількість різких прискорень</string>
+    <string name="is_delete_data">Точно видалити дані?</string>
+    <string name="allert">ПОПЕРЕДЖЕННЯ</string>
 </resources>

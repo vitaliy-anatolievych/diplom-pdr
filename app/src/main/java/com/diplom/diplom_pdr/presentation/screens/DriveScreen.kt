@@ -1,23 +1,40 @@
 package com.diplom.diplom_pdr.presentation.screens
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.diplom.diplom_pdr.R
 import com.diplom.diplom_pdr.databinding.FragmentDriveBinding
+import com.diplom.diplom_pdr.presentation.utils.AppPowerManager
+import com.diplom.diplom_pdr.presentation.utils.viewmodels.TripViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 
 
 class DriveScreen : Fragment() {
-
-
     private var _binding: FragmentDriveBinding? = null
     private val binding: FragmentDriveBinding
         get() = _binding ?: throw NullPointerException("FragmentDriveBinding is null")
 
     private var isDrivePaused = false
+
+    private val viewModel: TripViewModel by viewModel()
+    private var powerManager: AppPowerManager? = null
+
+    private var maxSpeed = 0
+    private var distance = 0.0
+    private var excessiveSpeed = 0
+    private var emergencySlowDown = 0
+    private var excessOver20 = 0
+    private var startTime = ""
+    private var speedList = mutableListOf<Int>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,10 +44,71 @@ class DriveScreen : Fragment() {
         _binding = FragmentDriveBinding.inflate(inflater, container, false)
 
         with(binding) {
+            powerManager = AppPowerManager(this.root.context)
+            powerManager?.stayWake()
+            viewModel.listenSpeed()
+
             tvRoad.text = String.format(getString(R.string.road_s), "0.0")
             tvMaxSpeed.text = String.format(getString(R.string.max_speed_s), "0")
-
             setStartMode()
+
+            val emergencySlowList = mutableListOf<Point>()
+
+            var timeCounter = 0
+            viewModel.currentSpeed.observe(viewLifecycleOwner) {
+                if (!isDrivePaused) {
+
+                    // Calculate Excessive Speed & Emergency Slow Down
+                    if (emergencySlowList.isEmpty()) {
+                        emergencySlowList.add(Point(System.currentTimeMillis(), it))
+                    } else {
+                        if (timeCounter < 3) {
+                            timeCounter++
+                        } else {
+                            emergencySlowList.add(Point(System.currentTimeMillis(), it))
+
+                            val deltaV = emergencySlowList[1].speed - emergencySlowList[0].speed
+                            val deltaT = emergencySlowList[1].time - emergencySlowList[0].time
+
+                            if (deltaT != 0L && deltaV != 0) {
+                                val a = deltaV.toDouble() / deltaT.toDouble()
+                                if (a > 0) {
+                                    if (a >= (G / 2)) {
+                                        excessiveSpeed++
+                                    }
+                                } else {
+                                    Log.e("A", "$a | $deltaT | $deltaV | $emergencySlowDown")
+                                    if (abs(a) >= (G / 2)) {
+                                        emergencySlowDown++
+                                    }
+                                }
+                            }
+                            emergencySlowList.clear()
+                            timeCounter = 0
+                        }
+                    }
+
+                    if (it > maxSpeed) {
+                        maxSpeed = it
+                        tvMaxSpeed.text = String.format(getString(R.string.max_speed_s), "$it")
+                    }
+
+                    if (it > 70) {
+                        excessOver20++
+                    }
+                    speedList.add(it)
+                }
+                tvSpeed.text = "$it"
+            }
+
+            viewModel.currentDistance.observe(viewLifecycleOwner) {
+                if (!isDrivePaused) {
+                    distance += it
+                    tvRoad.text =
+                        String.format(getString(R.string.road_s), String.format("%.1f", distance))
+                }
+            }
+
         }
 
         return binding.root
@@ -55,14 +133,21 @@ class DriveScreen : Fragment() {
         iconAction1.visibility = View.VISIBLE
         iconAction1.setImageResource(R.drawable.ic_pause)
         tvAction1.text = getString(R.string.pause)
+        viewModel.startTrip()
+        viewModel.listenDistance()
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        val startT = LocalDateTime.now().format(formatter)
+        startTime = startT
 
         btnAction1.setOnClickListener {
             if (!isDrivePaused) {
                 iconAction1.setImageResource(R.drawable.ic_play)
                 tvAction1.text = getString(R.string.start)
+                viewModel.stopTrip()
             } else {
                 iconAction1.setImageResource(R.drawable.ic_pause)
                 tvAction1.text = getString(R.string.pause)
+                viewModel.startTrip()
             }
 
             isDrivePaused = !isDrivePaused
@@ -74,7 +159,39 @@ class DriveScreen : Fragment() {
 
         btnAction2.setOnClickListener {
             // nav stats
-            findNavController().navigate(R.id.action_driveScreen_to_resultDriveScreen)
+            viewModel.stopTrip()
+            if (distance != 0.0) {
+
+                var averageSpeed = 0
+                for (speed in speedList) {
+                    averageSpeed += speed
+                }
+
+                averageSpeed /= speedList.size
+
+                val endT = LocalDateTime.now().format(formatter)
+                val action = DriveScreenDirections
+                    .actionDriveScreenToResultDriveScreen(
+                        distance = distance.toString(),
+                        medianSpeed = averageSpeed,
+                        excessiveSpeed = excessiveSpeed,
+                        emergencySlowDown = emergencySlowDown,
+                        startTime = startTime,
+                        endTime = endT,
+                        excessOver20 = excessOver20
+                    )
+                findNavController().navigate(action)
+
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Немає даних для запису у поїздку",
+                    Toast.LENGTH_SHORT
+                ).show()
+                val id = findNavController().currentDestination?.id
+                findNavController().popBackStack(id!!, true)
+                findNavController().navigate(id)
+            }
         }
 
     }
@@ -83,4 +200,10 @@ class DriveScreen : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    companion object {
+        private const val G = 9.8
+    }
+
+    data class Point(val time: Long, val speed: Int)
 }

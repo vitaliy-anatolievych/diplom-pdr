@@ -17,14 +17,16 @@ class DriveStatsRVAdapter :
         private val binding = ItemStatsBinding.bind(view)
 
         fun bind(model: DriveStatsModel) = with(binding) {
+
             tvDate.text = model.date
             tvDistance.text =
-                String.format(view.context.getString(R.string.s_km), "${model.distance}")
+                String.format(view.context.getString(R.string.s_km), String.format("%.1f", model.distance))
             tvAverageDistance.text =
-                String.format(view.context.getString(R.string.s_km_hour), "${model.averageSpeed}")
+                String.format(view.context.getString(R.string.s_km_hour), model.averageSpeed)
 
             tvExcessiveSpeed.text = "${model.countOfExcessiveSpeed}"
             tvEmergencySlowDown.text = "${model.countOfEmergencyDown}"
+            tvExcessiveSpeed.text = "${model.countExcessiveOver20}"
         }
     }
 

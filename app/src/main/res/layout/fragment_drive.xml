@@ -64,6 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingVertical="20dp"
+            android:maxLength="11"
             android:text="@string/road_s"
             android:textAlignment="center"
             android:textSize="24sp" />
