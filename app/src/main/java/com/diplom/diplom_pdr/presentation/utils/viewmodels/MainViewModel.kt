@@ -1,5 +1,6 @@
 package com.diplom.diplom_pdr.presentation.utils.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -151,8 +152,12 @@ class MainViewModel(
             testResult.totalWrongAnswers = totalWrongAnswers
             testResult.totalTime = totalTime
 
-            if (testResult.totalRightAnswers != 0 && testResult.totalWrongAnswers != 0) {
-                testResult.percentRightAnswers = (totalRightAnswers / (totalRightAnswers + totalWrongAnswers)) * 100
+            Log.e("TESTS", "$totalRightAnswers | $totalWrongAnswers")
+
+            if (totalRightAnswers != 0 && totalWrongAnswers != 0) {
+                val result =  (totalRightAnswers.toFloat() / (totalRightAnswers + totalWrongAnswers)) * 100
+                testResult.percentRightAnswers = result.toInt()
+                Log.e("TESTS", "${testResult.percentRightAnswers} | $result")
             } else {
                 testResult.percentRightAnswers = 0
             }
