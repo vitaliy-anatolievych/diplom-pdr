@@ -36,6 +36,8 @@ class DriveScreen : Fragment() {
     private var startTime = ""
     private var speedList = mutableListOf<Int>()
 
+    private var isUniqExcess = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -94,8 +96,18 @@ class DriveScreen : Fragment() {
                     }
 
                     if (it > 70) {
-                        excessOver20++
+                        if (!isUniqExcess) {
+                            isUniqExcess = true
+                            excessOver20++
+                        }
                     }
+
+                    if (isUniqExcess) {
+                        if (it < 68) {
+                            isUniqExcess = false
+                        }
+                    }
+
                     speedList.add(it)
                 }
                 tvSpeed.text = "$it"

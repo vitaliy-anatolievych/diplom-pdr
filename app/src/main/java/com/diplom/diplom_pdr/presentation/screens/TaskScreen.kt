@@ -149,7 +149,7 @@ class TaskScreen : Fragment() {
                         .error(R.drawable.no_image_uk)
                         .into(imgTask)
                 } else {
-                    imgTask.visibility = View.INVISIBLE
+                    imgTask.visibility = View.GONE
                 }
 
 

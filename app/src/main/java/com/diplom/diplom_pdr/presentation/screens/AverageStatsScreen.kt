@@ -30,6 +30,8 @@ class AverageStatsScreen : Fragment() {
 
             var averageDistance = 0.0
             var averageSpeed = 0
+
+            var averageSpeedExcpensiveOver20 = 0
             var excessiveSpeed = 0
             var emergencySlowDown = 0
             viewModel.driveStatsData.observe(viewLifecycleOwner) { list ->
@@ -38,15 +40,20 @@ class AverageStatsScreen : Fragment() {
                     averageSpeed += list[id].averageSpeed
                     excessiveSpeed += list[id].countOfExcessiveSpeed
                     emergencySlowDown += list[id].countOfEmergencyDown
+                    averageSpeedExcpensiveOver20 += list[id].countExcessiveOver20
                 }
 
-                averageDistance /= list.size
-                averageSpeed /= list.size // TODO чі правильна середня швидкість?
+                if (list.isNotEmpty()) {
+                    averageDistance /= list.size
+                    averageSpeed /= list.size // TODO чі правильна середня швидкість?
+                    averageSpeedExcpensiveOver20 /= list.size
+                }
 
                 tvDistance.text =
                     String.format(getString(R.string.s_km), String.format("%.1f", averageDistance))
                 tvAverageDistance.text =
                     String.format(getString(R.string.s_km_hour), "$averageSpeed")
+                tvOver20.text = averageSpeedExcpensiveOver20.toString()
                 tvExcessiveSpeed.text = "$excessiveSpeed"
                 tvEmergencySlowDown.text = "$emergencySlowDown"
             }

@@ -26,7 +26,7 @@ class DriveStatsRVAdapter :
 
             tvExcessiveSpeed.text = "${model.countOfExcessiveSpeed}"
             tvEmergencySlowDown.text = "${model.countOfEmergencyDown}"
-            tvExcessiveSpeed.text = "${model.countExcessiveOver20}"
+            tvOver20.text = "${model.countExcessiveOver20}"
         }
     }
 
