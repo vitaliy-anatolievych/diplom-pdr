@@ -31,7 +31,7 @@ class TestStatsScreen : Fragment() {
         with(binding) {
 
             viewModel.statsData.observe(viewLifecycleOwner) {
-                tvAllTestsComplete.text = "${it.allTestsPassed}"
+                tvAllTestsComplete.text = "${it.totalRightAnswers + it.totalWrongAnswers}"
                 tvCountRightAnswers.text = "${it.totalRightAnswers}"
                 tvPercentRightAnswers.text = "${it.percentRightAnswers}%"
                 tvCountFailAnswers.text = "${it.totalWrongAnswers}"

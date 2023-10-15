@@ -151,20 +151,12 @@ class MainViewModel(
             testResult.totalWrongAnswers = totalWrongAnswers
             testResult.totalTime = totalTime
 
-            if (testResult.totalRightAnswers == 0 && testResult.totalWrongAnswers == 0) {
-                testResult.percentRightAnswers = 0
+            if (testResult.totalRightAnswers != 0 && testResult.totalWrongAnswers != 0) {
+                testResult.percentRightAnswers = (totalRightAnswers / (totalRightAnswers + totalWrongAnswers)) * 100
             } else {
-                if (testResult.totalRightAnswers > 0 && testResult.totalWrongAnswers == 0) {
-                    testResult.percentRightAnswers = 100
-                } else {
-                    if (testResult.totalWrongAnswers > 0 && testResult.totalRightAnswers == 0) {
-                        testResult.percentRightAnswers = 0
-                    } else {
-                        testResult.percentRightAnswers =
-                            (testResult.totalRightAnswers / testResult.totalWrongAnswers) * 100
-                    }
-                }
+                testResult.percentRightAnswers = 0
             }
+
 
             localStorage.insertTestResult(testResult)
             _statsData.postValue(testResult)
