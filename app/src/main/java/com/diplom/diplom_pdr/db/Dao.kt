@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.diplom.diplom_pdr.models.Answer
 import com.diplom.diplom_pdr.models.DriveStatsModel
 import com.diplom.diplom_pdr.models.TaskItem
 import com.diplom.diplom_pdr.models.TestsResultEntity
@@ -14,8 +15,15 @@ import com.diplom.diplom_pdr.models.ThemeItemWithTasks
 @Dao
 interface Dao {
 
-    @Query("SELECT * FROM task_item")
-    suspend fun  getQuestionsForADay(): List<TaskItem>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAnswer(answer: Answer)
+
+    @Insert
+    suspend fun insertAnswer(answers: List<Answer>)
+
+    @Query("SELECT * FROM answer WHERE taskItemQuestion =:question")
+    suspend fun getAnswerList(question: String): List<Answer>
+
 
     @Query("SELECT * FROM task_item WHERE is_favorite = :isFavorite")
     suspend fun getFavoriteTasks(isFavorite: Boolean): List<TaskItem>

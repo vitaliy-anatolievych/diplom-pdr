@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.diplom.diplom_pdr.controller.LocalStorage
+import com.diplom.diplom_pdr.models.Answer
 import com.diplom.diplom_pdr.models.TaskItem
 import com.diplom.diplom_pdr.presentation.screens.TaskScreen
 import kotlinx.coroutines.CoroutineScope
@@ -30,9 +31,29 @@ class QuestViewModel(
     val gameEnd: LiveData<Unit>
         get() = _gameEnd
 
-    var answersList: List<TaskScreen.Answer>? = null
+    private val _answerList = MutableLiveData<List<Answer>>()
+    val answerList: LiveData<List<Answer>>
+        get() = _answerList
+
     var questionList: List<TaskScreen.Question>? = null
 
+
+    fun insertAnswer(answer: Answer) {
+        CoroutineScope(Dispatchers.IO).launch {
+            localStorage.insertAnswer(answer)
+        }
+    }
+
+    fun getAnswerList(question: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val list = localStorage.getAnswerList(question)
+                .map {
+                    it.copy(name = it.name.replace("|", ""))
+                }
+
+            _answerList.postValue(list)
+        }
+    }
 
     fun updateRightAnswers(title: String, rightAnswers: Int) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -77,7 +98,7 @@ class QuestViewModel(
     }
 
     fun nextQuestion(taskItem: TaskItem, step: Int) {
-        answersList?.let {
+        _answerList.value?.let {
             if (step < questionList?.size!! - 1) {
                 CoroutineScope(Dispatchers.IO).launch {
                     localStorage.updateTask(taskItem)

@@ -127,13 +127,12 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <ListView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ll_answers"
             android:layout_width="0dp"
             android:layout_height="300dp"
             android:layout_margin="16dp"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="5dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:overScrollMode="never"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

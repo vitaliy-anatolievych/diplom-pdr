@@ -3,6 +3,7 @@ package com.diplom.diplom_pdr.controller
 import android.content.Context
 import com.diplom.diplom_pdr.R
 import com.diplom.diplom_pdr.db.Dao
+import com.diplom.diplom_pdr.models.Answer
 import com.diplom.diplom_pdr.models.DriveStatsModel
 import com.diplom.diplom_pdr.models.TaskItem
 import com.diplom.diplom_pdr.models.TestsResultEntity
@@ -14,6 +15,10 @@ import kotlinx.coroutines.withContext
 import java.nio.charset.StandardCharsets
 
 class LocalStorage(private val context: Context, private val dao: Dao) {
+
+    suspend fun insertAnswer(answer: Answer) = dao.insertAnswer(answer)
+
+    suspend fun getAnswerList(question: String) = dao.getAnswerList(question)
 
     suspend fun getRandQuestions(count: Int): List<TaskItem> {
         val themes = dao.getThemeItemWithTasks()
@@ -115,13 +120,25 @@ class LocalStorage(private val context: Context, private val dao: Dao) {
 
                             val img = parseTask[0]
                             val question = parseTask[1]
-                            val answers = parseTask.slice(2 until parseTask.size - 1).map { "$it|" }
+                            val answers =
+                                parseTask
+                                    .slice(2 until parseTask.size - 1)
+                                    .map { "$it|" }
+                                    .map {
+                                        Answer(
+                                            name = it,
+                                            type = Answer.TYPE.DEFAULT,
+                                            taskItemQuestion = question
+                                        )
+                                    }
+
+                            dao.insertAnswer(answers)
+
                             val rightAnswer = parseTask[parseTask.size - 1]
 
                             dao.insertTaskItem(
                                 TaskItem(
                                     question = question,
-                                    answers = answers,
                                     rightAnswer = rightAnswer,
                                     imgURL = img,
                                     themeItemTitle = listThemes[i - 1].themeItem.title,

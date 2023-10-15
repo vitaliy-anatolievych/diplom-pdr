@@ -1,6 +1,5 @@
 package com.diplom.diplom_pdr.presentation.utils.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,8 @@ import com.diplom.diplom_pdr.models.TaskItem
 import com.diplom.diplom_pdr.presentation.screens.TaskScreen
 
 class TaskRVAdapter : ListAdapter<TaskScreen.Question, TaskRVAdapter.TaskViewHolder>(DiffCallBack()) {
+
+    private var listenerTaskClick: ((TaskItem) -> Unit)? = null
 
     override fun onCurrentListChanged(
         previousList: MutableList<TaskScreen.Question>,
@@ -53,7 +54,18 @@ class TaskRVAdapter : ListAdapter<TaskScreen.Question, TaskRVAdapter.TaskViewHol
                     )
                 )
             }
+
+
+            binding.cardTask.setOnClickListener {
+                if (model.taskItem.status != TaskItem.STATUS.CLOSE) {
+                    listenerTaskClick?.invoke(model.taskItem)
+                }
+            }
         }
+    }
+
+    fun setOnTaskClickListener(listener: (TaskItem) -> Unit) {
+        listenerTaskClick = listener
     }
 
     class DiffCallBack() : DiffUtil.ItemCallback<TaskScreen.Question>() {

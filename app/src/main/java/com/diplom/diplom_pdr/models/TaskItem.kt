@@ -6,6 +6,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 import java.io.Serializable
 
 @Entity(tableName = "task_item")
@@ -18,8 +19,6 @@ data class TaskItem(
     var status: STATUS = STATUS.CLOSE,
     @ColumnInfo(name = "question")
     val question: String,
-    @ColumnInfo(name = "answers")
-    val answers: List<String>,
     @ColumnInfo(name = "right_answer")
     val rightAnswer: String,
     @ColumnInfo(name = "img_url")

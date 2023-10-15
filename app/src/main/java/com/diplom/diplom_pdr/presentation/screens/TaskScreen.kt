@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.diplom.diplom_pdr.R
 import com.diplom.diplom_pdr.databinding.FragmentTaskBinding
+import com.diplom.diplom_pdr.models.Answer
 import com.diplom.diplom_pdr.models.TaskItem
 import com.diplom.diplom_pdr.presentation.utils.CountUpTimer
+import com.diplom.diplom_pdr.presentation.utils.adapters.AnswerRVAdapter
 import com.diplom.diplom_pdr.presentation.utils.adapters.TaskRVAdapter
 import com.diplom.diplom_pdr.presentation.utils.viewmodels.QuestViewModel
 import com.squareup.picasso.Picasso
@@ -78,6 +79,10 @@ class TaskScreen : Fragment() {
         with(binding) {
             val adapter = TaskRVAdapter()
             rvNumberQuest.adapter = adapter
+
+            adapter.setOnTaskClickListener {
+                viewModel.setCurrentTask(it)
+            }
 
             viewModel.favoriteData.observe(viewLifecycleOwner) {
                 /**
@@ -154,37 +159,36 @@ class TaskScreen : Fragment() {
 
 
                 tvQuestion.text = it.question
+                viewModel.getAnswerList(it.question)
+            }
 
-
+            viewModel.answerList.observe(viewLifecycleOwner) {
                 /**
                  * answers
                  */
 
-                val data = it.answers
-                    .mapIndexed { index, s ->
-                        Answer(id = index, name = s)
-                    }
+                val answerRVAdapter = AnswerRVAdapter()
+                binding.llAnswers.adapter = answerRVAdapter
+                answerRVAdapter.submitList(it)
 
-                viewModel.answersList = data
-
-                binding.llAnswers.adapter = ArrayAdapter(
-                    requireContext(),
-                    R.layout.simple_answer,
-                    R.id.tv_answer,
-                    data
-                )
-
-                binding.llAnswers.setOnItemClickListener { parent, view, position, id ->
-
-                    val answer = data[position]
+                answerRVAdapter.onClickItemListener { answer ->
                     currentTask?.let { task ->
                         if (task.status == TaskItem.STATUS.SELECTED) {
                             if (task.rightAnswer == answer.name) {
                                 task.status = TaskItem.STATUS.RIGHT
                                 rightAnswers++
+                                val newAnswer = answer.copy(type = Answer.TYPE.RIGHT)
+                                viewModel.insertAnswer(newAnswer)
                             } else {
                                 task.status = TaskItem.STATUS.FAIL
                                 wrongAnswers++
+                                val newAnswer = answer.copy(type = Answer.TYPE.WRONG)
+                                val rightAnswer =
+                                    it.find { answer -> answer.name == task.rightAnswer }!!
+                                        .copy(type = Answer.TYPE.RIGHT)
+
+                                viewModel.insertAnswer(newAnswer)
+                                viewModel.insertAnswer(rightAnswer)
                             }
                             viewModel.nextQuestion(task, step++)
                         }
@@ -253,9 +257,4 @@ class TaskScreen : Fragment() {
     }
 
     data class Question(val id: Int, val taskItem: TaskItem)
-    data class Answer(val id: Int, val name: String) {
-        override fun toString(): String {
-            return name
-        }
-    }
 }

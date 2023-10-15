@@ -36,7 +36,6 @@ class MainViewModel(
     val driveStatsData: LiveData<List<DriveStatsModel>>
         get() = _driveStatsData
 
-
     private val _tripJournalData = MutableLiveData<List<TripDataDBEntity>>()
     val tripJournalData: LiveData<List<TripDataDBEntity>>
         get() = _tripJournalData

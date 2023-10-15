@@ -1,6 +1,7 @@
 package com.diplom.diplom_pdr.db
 
 import androidx.room.TypeConverter
+import com.diplom.diplom_pdr.models.Answer
 import com.diplom.diplom_pdr.models.TaskItem
 
 class RoomTypeConverters {
@@ -28,6 +29,20 @@ class RoomTypeConverters {
 
     @TypeConverter
     fun fromTaskStatusToString(status: TaskItem.STATUS): String = status.name
+
+    @TypeConverter
+    fun fromTaskStatusToString(status: Answer.TYPE): String = status.name
+
+    @TypeConverter
+    fun fromStringToTaskAnswer(string: String): Answer.TYPE {
+        // RIGHT, WRONG, DEFAULT
+        return when(string) {
+            "RIGHT" -> Answer.TYPE.RIGHT
+            "WRONG" -> Answer.TYPE.WRONG
+            "DEFAULT" -> Answer.TYPE.DEFAULT
+            else -> Answer.TYPE.DEFAULT
+        }
+    }
 
     @TypeConverter
     fun fromStringToTaskStatus(str: String): TaskItem.STATUS {
