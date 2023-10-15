@@ -93,8 +93,6 @@ class QuestViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             localStorage.setFavorite(id, isFavorite)
             _favoriteData.postValue(isFavorite)
-//            val item = localStorage.getCurrentTaskItem(id)
-//            _currentQuest.postValue(item)
         }
     }
 

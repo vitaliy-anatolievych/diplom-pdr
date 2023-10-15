@@ -58,10 +58,8 @@ class TaskScreen : Fragment() {
          * first start fragment
          */
         var isNew = true
-        for (task in tasks) {
-            if (task.status != TaskItem.STATUS.CLOSE) {
-                isNew = false
-            }
+        if (tasks[0].status != TaskItem.STATUS.CLOSE) {
+            isNew = false
         }
 
         if (isNew) {
