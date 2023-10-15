@@ -8,10 +8,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.diplom.diplom_pdr.R
-import com.diplom.diplom_pdr.databinding.FragmentStatsBinding
 import com.diplom.diplom_pdr.databinding.FragmentTestsBinding
-import com.diplom.diplom_pdr.presentation.utils.viewmodels.MainViewModel
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import com.diplom.diplom_pdr.models.TaskItem
+import com.diplom.diplom_pdr.presentation.utils.viewmodels.TestQuestionsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class TestsScreen : Fragment() {
@@ -20,7 +20,11 @@ class TestsScreen : Fragment() {
     private val binding: FragmentTestsBinding
         get() = _binding ?: throw NullPointerException("FragmentTestsBinding is null")
 
-    private val viewModel: MainViewModel by activityViewModel()
+    private val viewModel: TestQuestionsViewModel by viewModel()
+
+    private var questionsForADayData = emptyList<TaskItem>()
+    private var questionsRandomData = emptyList<TaskItem>()
+    private var favoriteData = emptyList<TaskItem>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,13 +34,33 @@ class TestsScreen : Fragment() {
         _binding = FragmentTestsBinding.inflate(inflater, container, false)
 
         with(binding) {
+            viewModel.getQuestionsForADay()
+            viewModel.getRandomQuestions()
+            viewModel.getFavoriteTests()
+
+            viewModel.questionsForADayData.observe(viewLifecycleOwner) {
+                questionsForADayData = it
+            }
+
+            viewModel.questionsRandomData.observe(viewLifecycleOwner) {
+                questionsRandomData = it
+            }
+
+            viewModel.favoriteData.observe(viewLifecycleOwner) {
+                favoriteData = it
+            }
 
             btnQuestionOfDay.setOnClickListener {
-                viewModel.getQuestionsForADay()
-                viewModel.questionsForADayData.observe(viewLifecycleOwner) {
+                if (questionsForADayData.isNotEmpty()) {
                     val action =
-                        TestsScreenDirections.actionTestsScreenToTaskScreen(it.toTypedArray())
+                        TestsScreenDirections.actionTestsScreenToTaskScreen(questionsForADayData.toTypedArray())
                     findNavController().navigate(action)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Немає завдань",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
@@ -45,28 +69,30 @@ class TestsScreen : Fragment() {
             }
 
             btnRandQuestions.setOnClickListener {
-                viewModel.getRandomQuestions()
-                viewModel.questionsRandomData.observe(viewLifecycleOwner) {
+                if (questionsRandomData.isNotEmpty()) {
                     val action =
-                        TestsScreenDirections.actionTestsScreenToTaskScreen(it.toTypedArray())
+                        TestsScreenDirections.actionTestsScreenToTaskScreen(questionsRandomData.toTypedArray())
                     findNavController().navigate(action)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Немає завдань",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             btnFavoriteQuestions.setOnClickListener {
-                viewModel.getFavoriteTests()
-                viewModel.favoriteData.observe(viewLifecycleOwner) {
-                    if (it.isNotEmpty()) {
-                        val action =
-                            TestsScreenDirections.actionTestsScreenToTaskScreen(it.toTypedArray())
-                        findNavController().navigate(action)
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Немає обраних завдань",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                if (favoriteData.isNotEmpty()) {
+                    val action =
+                        TestsScreenDirections.actionTestsScreenToTaskScreen(favoriteData.toTypedArray())
+                    findNavController().navigate(action)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Немає обраних завдань",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 

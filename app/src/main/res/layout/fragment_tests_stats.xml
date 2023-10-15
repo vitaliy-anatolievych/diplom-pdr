@@ -117,7 +117,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center"
                     android:layout_marginBottom="24dp"
-                    android:maxLength="3"
+                    android:maxLength="4"
                     android:text="0"
                     android:textAlignment="center"
                     android:textColor="@color/black"

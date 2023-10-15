@@ -40,37 +40,7 @@ class MainViewModel(
     val tripJournalData: LiveData<List<TripDataDBEntity>>
         get() = _tripJournalData
 
-    private val _favoriteData = MutableLiveData<List<TaskItem>>()
-    val favoriteData: LiveData<List<TaskItem>>
-        get() = _favoriteData
 
-    private val _questionsForADayData = MutableLiveData<List<TaskItem>>()
-    val questionsForADayData: LiveData<List<TaskItem>>
-        get() = _questionsForADayData
-
-    private val _questionsRandomData = MutableLiveData<List<TaskItem>>()
-    val questionsRandomData: LiveData<List<TaskItem>>
-        get() = _questionsRandomData
-
-    fun getRandomQuestions() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val list = localStorage.getRandQuestions(20)
-            _questionsRandomData.postValue(list)
-        }
-    }
-
-    fun getQuestionsForADay() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val list = localStorage.getRandQuestions(5)
-            _questionsForADayData.postValue(list)
-        }
-    }
-
-    fun getFavoriteTests() {
-        CoroutineScope(Dispatchers.IO).launch {
-            _favoriteData.postValue(localStorage.getFavoriteTasks())
-        }
-    }
 
     fun getTripJournal() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -158,7 +128,11 @@ class MainViewModel(
                 testResult.percentRightAnswers = result.toInt()
                 Log.e("TESTS", "${testResult.percentRightAnswers} | $result")
             } else {
-                testResult.percentRightAnswers = 0
+                if (totalRightAnswers > 0) {
+                    testResult.percentRightAnswers = 100
+                } else {
+                    testResult.percentRightAnswers = 0
+                }
             }
 
 

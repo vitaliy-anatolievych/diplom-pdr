@@ -196,8 +196,6 @@ class TaskScreen : Fragment() {
                 }
             }
 
-
-
             btnFavorite.setOnClickListener {
                 currentTask?.let { task ->
                     viewModel.setFavorite(task.id!!, !isFavorite)

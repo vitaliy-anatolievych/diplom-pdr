@@ -5,6 +5,7 @@ import com.diplom.diplom_pdr.db.Dao
 import com.diplom.diplom_pdr.db.MainDataBase
 import com.diplom.diplom_pdr.presentation.utils.viewmodels.MainViewModel
 import com.diplom.diplom_pdr.presentation.utils.viewmodels.QuestViewModel
+import com.diplom.diplom_pdr.presentation.utils.viewmodels.TestQuestionsViewModel
 import com.diplom.diplom_pdr.presentation.utils.viewmodels.TestStatsViewModel
 import com.diplom.diplom_pdr.presentation.utils.viewmodels.TripViewModel
 import org.koin.android.ext.koin.androidApplication
@@ -45,6 +46,12 @@ val core = module {
             deleteStatsJournalUseCase = get(),
             isHaveNotesTripJournalUseCase = get(),
             listenDistanceUseCase = get(),
+        )
+    }
+
+    viewModel {
+        TestQuestionsViewModel(
+            localStorage = get()
         )
     }
 
