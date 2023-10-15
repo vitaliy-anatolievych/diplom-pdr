@@ -71,7 +71,11 @@ class TestsScreen : Fragment() {
             btnRandQuestions.setOnClickListener {
                 if (questionsRandomData.isNotEmpty()) {
                     val action =
-                        TestsScreenDirections.actionTestsScreenToTaskScreen(questionsRandomData.toTypedArray())
+                        TestsScreenDirections.actionTestsScreenToTaskScreen(
+                            questionsRandomData.toTypedArray(),
+                            true
+                        )
+
                     findNavController().navigate(action)
                 } else {
                     Toast.makeText(

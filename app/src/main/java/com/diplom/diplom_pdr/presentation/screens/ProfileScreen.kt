@@ -5,16 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.diplom.diplom_pdr.R
 import com.diplom.diplom_pdr.databinding.FragmentProfileBinding
+import com.diplom.diplom_pdr.presentation.utils.viewmodels.MainViewModel
 
 
-class ProfileScreen: Fragment(R.layout.fragment_profile) {
+class ProfileScreen : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding: FragmentProfileBinding
         get() = _binding ?: throw NullPointerException("FragmentProfileBinding is null")
+
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,6 +28,26 @@ class ProfileScreen: Fragment(R.layout.fragment_profile) {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
 
         with(binding) {
+
+            viewModel.userData.observe(viewLifecycleOwner) {
+                tvCurrentSplit.text = it.driveRating.toString()
+                tvCurrentCurrentRating.text = it.testRating.toString()
+
+                when (it.testRating) {
+                    in 0..40 -> {
+                        cardCurrentRating.setCardBackgroundColor(requireContext().getColor(android.R.color.holo_red_dark))
+                    }
+
+                    in 40..80 -> {
+                        cardCurrentRating.setCardBackgroundColor(requireContext().getColor(android.R.color.holo_orange_light))
+                    }
+
+                    in 80..100 -> {
+                        cardCurrentRating.setCardBackgroundColor(requireContext().getColor(android.R.color.holo_green_light))
+                    }
+                }
+            }
+
             btnTrips.setOnClickListener {
                 findNavController().navigate(R.id.action_profileScreen_to_statsScreen)
             }

@@ -28,6 +28,11 @@ class MainActivity : AppCompatActivity() {
         requestPermission()
         viewModel.fillData()
         loadBottomNav()
+
+        viewModel.userData.observe(this) {
+            _binding.tvFlame.text = it.driveRating.toString()
+            _binding.tvStar.text = it.testRating.toString()
+        }
     }
 
     private fun requestPermission() {

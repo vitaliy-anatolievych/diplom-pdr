@@ -8,6 +8,7 @@ import com.diplom.diplom_pdr.models.DriveStatsModel
 import com.diplom.diplom_pdr.models.TaskItem
 import com.diplom.diplom_pdr.models.TestsResultEntity
 import com.diplom.diplom_pdr.models.ThemeItem
+import com.diplom.diplom_pdr.models.UserEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -16,27 +17,35 @@ import java.nio.charset.StandardCharsets
 
 class LocalStorage(private val context: Context, private val dao: Dao) {
 
+    suspend fun insertUser(userEntity: UserEntity) = dao.insertUser(userEntity)
+
+    suspend fun getUser() = dao.getUser()
+
     suspend fun insertAnswer(answer: Answer) = dao.insertAnswer(answer)
 
     suspend fun getAnswerList(question: String) = dao.getAnswerList(question)
 
     suspend fun getRandQuestions(count: Int): List<TaskItem> {
-        val themes = dao.getThemeItemWithTasks()
+        return try {
+            val themes = dao.getThemeItemWithTasks()
 
-        val allTasks = themes.flatMap { it.taskItem }
+            val allTasks = themes.flatMap { it.taskItem }
 
-        val randomNums = mutableSetOf<Int>()
-        while (randomNums.size < count) {
-            val randNum = (0..allTasks.size).random()
-            randomNums.add(randNum)
+            val randomNums = mutableSetOf<Int>()
+            while (randomNums.size < count) {
+                val randNum = (0..allTasks.size).random()
+                randomNums.add(randNum)
+            }
+
+            val randTasks = mutableListOf<TaskItem>()
+            randomNums.forEachIndexed { index, i ->
+                randTasks.add(allTasks[i])
+            }
+
+            randTasks
+        } catch (e: Exception) {
+            emptyList<TaskItem>()
         }
-
-        val randTasks = mutableListOf<TaskItem>()
-        randomNums.forEachIndexed { index, i ->
-            randTasks.add(allTasks[i])
-        }
-
-        return randTasks
     }
 
     suspend fun getFavoriteTasks() = dao.getFavoriteTasks(true)

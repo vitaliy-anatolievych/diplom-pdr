@@ -1,23 +1,18 @@
 package com.diplom.diplom_pdr.presentation.utils.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.diplom.diplom_pdr.controller.LocalStorage
 import com.diplom.diplom_pdr.models.DriveStatsModel
-import com.diplom.diplom_pdr.models.TaskItem
 import com.diplom.diplom_pdr.models.TestsResultEntity
-import com.diplom.diplom_pdr.models.ThemeItem
 import com.diplom.diplom_pdr.models.ThemeItemWithTasks
-import com.testtask.data.db.AppDataBase
+import com.diplom.diplom_pdr.models.UserEntity
 import com.testtask.data.db.dao.AppDao
 import com.testtask.data.db.models.TripDataDBEntity
-import com.testtask.data.journals.TripJournal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.Duration
 
 class MainViewModel(
     private val localStorage: LocalStorage,
@@ -40,7 +35,22 @@ class MainViewModel(
     val tripJournalData: LiveData<List<TripDataDBEntity>>
         get() = _tripJournalData
 
+    private val _userData = MutableLiveData<UserEntity>()
+    val userData: LiveData<UserEntity>
+        get() = _userData
 
+    fun updateUser(userEntity: UserEntity) {
+        CoroutineScope(Dispatchers.IO).launch {
+            localStorage.insertUser(userEntity)
+            _userData.postValue(localStorage.getUser())
+        }
+    }
+
+    fun getUser() {
+        CoroutineScope(Dispatchers.IO).launch {
+            _userData.postValue(localStorage.getUser())
+        }
+    }
 
     fun getTripJournal() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -81,8 +91,10 @@ class MainViewModel(
                         totalTime = 0L
                     )
                 )
+                updateUser(UserEntity(driveRating = 100, testRating = 60))
             } else {
                 _themeData.postValue(localStorage.getAllData())
+                getUser()
             }
         }
     }
@@ -121,12 +133,10 @@ class MainViewModel(
             testResult.totalWrongAnswers = totalWrongAnswers
             testResult.totalTime = totalTime
 
-            Log.e("TESTS", "$totalRightAnswers | $totalWrongAnswers")
-
             if (totalRightAnswers != 0) {
-                val result =  (totalRightAnswers.toFloat() / (totalRightAnswers + totalWrongAnswers)) * 100
+                val result =
+                    (totalRightAnswers.toFloat() / (totalRightAnswers + totalWrongAnswers)) * 100
                 testResult.percentRightAnswers = result.toInt()
-                Log.e("TESTS", "${testResult.percentRightAnswers} | $result")
             } else {
                 testResult.percentRightAnswers = 0
             }

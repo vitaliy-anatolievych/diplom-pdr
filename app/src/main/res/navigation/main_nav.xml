@@ -144,6 +144,10 @@
         <argument
             android:name="task_item"
             app:argType="com.diplom.diplom_pdr.models.TaskItem[]" />
+        <argument
+            android:name="isRandQuestion"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
 </navigation>

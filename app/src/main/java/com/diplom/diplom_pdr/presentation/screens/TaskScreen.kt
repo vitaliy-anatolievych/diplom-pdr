@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.diplom.diplom_pdr.R
 import com.diplom.diplom_pdr.databinding.FragmentTaskBinding
 import com.diplom.diplom_pdr.models.Answer
@@ -13,6 +14,7 @@ import com.diplom.diplom_pdr.models.TaskItem
 import com.diplom.diplom_pdr.presentation.utils.CountUpTimer
 import com.diplom.diplom_pdr.presentation.utils.adapters.AnswerRVAdapter
 import com.diplom.diplom_pdr.presentation.utils.adapters.TaskRVAdapter
+import com.diplom.diplom_pdr.presentation.utils.viewmodels.MainViewModel
 import com.diplom.diplom_pdr.presentation.utils.viewmodels.QuestViewModel
 import com.squareup.picasso.Picasso
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -30,9 +32,13 @@ class TaskScreen : Fragment() {
     private var isFavorite = false
     private var currentTask: TaskItem? = null
     private val viewModel: QuestViewModel by viewModel()
+    private val mainViewModel: MainViewModel by activityViewModels()
     private var step = 0
     private var rightAnswers = 0
     private var wrongAnswers = 0
+
+    private var isRandQuestions = false
+    private var testIsEnded = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,10 +47,10 @@ class TaskScreen : Fragment() {
     ): View {
         _binding = FragmentTaskBinding.inflate(inflater, container, false)
 
-        val tasks = TaskScreenArgs
-            .fromBundle(requireArguments())
-            .taskItem
-            .toMutableList()
+        val bundle = TaskScreenArgs.fromBundle(requireArguments())
+        val tasks = bundle.taskItem.toMutableList()
+
+        isRandQuestions = bundle.isRandQuestion
 
         viewModel.setCurrentTasksList(tasks)
 
@@ -94,6 +100,20 @@ class TaskScreen : Fragment() {
             viewModel.gameEnd.observe(viewLifecycleOwner) {
                 currentTask?.let {
                     viewModel.updateIsTestPassed(title = it.themeItemTitle, isTestPassed = true)
+                }
+
+                testIsEnded = true
+
+                if (isRandQuestions) {
+                    val userData = mainViewModel.userData.value
+                    userData?.let { user ->
+                        when (wrongAnswers) {
+                            0 -> mainViewModel.updateUser(user.copy(testRating = user.testRating + 10))
+                            in 1..2 -> mainViewModel.updateUser(user.copy(testRating = user.testRating + 5))
+                            in 3..5 -> {}
+                            else -> mainViewModel.updateUser(user.copy(testRating = user.testRating - 5))
+                        }
+                    }
                 }
 
                 view?.postDelayed({
@@ -184,11 +204,14 @@ class TaskScreen : Fragment() {
                                 wrongAnswers++
                                 val newAnswer = answer.copy(type = Answer.TYPE.WRONG)
                                 val rightAnswer =
-                                    it.find { answer -> answer.name == task.rightAnswer }!!
-                                        .copy(type = Answer.TYPE.RIGHT)
+                                    it.find { answer -> answer.name == task.rightAnswer }
+                                        ?.copy(type = Answer.TYPE.RIGHT)
 
                                 viewModel.insertAnswer(newAnswer)
-                                viewModel.insertAnswer(rightAnswer)
+
+                                rightAnswer?.let {
+                                    viewModel.insertAnswer(rightAnswer)
+                                }
                             }
                             viewModel.nextQuestion(task, step++)
                         }
@@ -240,6 +263,13 @@ class TaskScreen : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        if (isRandQuestions && !testIsEnded) {
+            val userData = mainViewModel.userData.value
+            userData?.let { user ->
+                mainViewModel.updateUser(user.copy(testRating = user.testRating - 5))
+            }
+        }
+
         currentTask?.let {
             viewModel.updateRightAnswers(title = it.themeItemTitle, rightAnswers = rightAnswers)
             viewModel.updateWrongAnswers(title = it.themeItemTitle, wrongAnswers = wrongAnswers)

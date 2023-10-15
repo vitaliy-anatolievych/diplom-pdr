@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.diplom.diplom_pdr.controller.LocalStorage
 import com.diplom.diplom_pdr.models.Answer
 import com.diplom.diplom_pdr.models.TaskItem
+import com.diplom.diplom_pdr.models.UserEntity
 import com.diplom.diplom_pdr.presentation.screens.TaskScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

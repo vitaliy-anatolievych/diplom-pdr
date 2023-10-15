@@ -11,9 +11,16 @@ import com.diplom.diplom_pdr.models.TaskItem
 import com.diplom.diplom_pdr.models.TestsResultEntity
 import com.diplom.diplom_pdr.models.ThemeItem
 import com.diplom.diplom_pdr.models.ThemeItemWithTasks
+import com.diplom.diplom_pdr.models.UserEntity
 
 @Dao
 interface Dao {
+
+    @Query("SELECT * FROM UserEntity")
+    suspend fun getUser(): UserEntity
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUser(userEntity: UserEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAnswer(answer: Answer)
