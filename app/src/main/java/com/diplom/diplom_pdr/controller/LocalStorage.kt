@@ -33,7 +33,7 @@ class LocalStorage(private val context: Context, private val dao: Dao) {
 
             val randomNums = mutableSetOf<Int>()
             while (randomNums.size < count) {
-                val randNum = (0..allTasks.size).random()
+                val randNum = (allTasks.indices).random()
                 randomNums.add(randNum)
             }
 

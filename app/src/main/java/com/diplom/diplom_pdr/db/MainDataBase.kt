@@ -15,7 +15,8 @@ import com.diplom.diplom_pdr.models.UserEntity
 @TypeConverters(RoomTypeConverters::class)
 @Database(
     entities = [TaskItem::class, ThemeItem::class, TestsResultEntity::class, DriveStatsModel::class, Answer::class, UserEntity::class],
-    version = 1
+    version = 2,
+    exportSchema = true
 )
 abstract class MainDataBase : RoomDatabase() {
 
