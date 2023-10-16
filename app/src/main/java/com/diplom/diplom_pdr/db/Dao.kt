@@ -25,7 +25,7 @@ interface Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAnswer(answer: Answer)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAnswer(answers: List<Answer>)
 
     @Query("SELECT * FROM answer WHERE taskItemQuestion =:question")
