@@ -97,7 +97,7 @@ class TaskScreen : Fragment() {
 
             viewModel.gameEnd.observe(viewLifecycleOwner) {
                 currentTask?.let {
-                    viewModel.updateIsTestPassed(title = it.themeItemTitle, isTestPassed = true)
+                    if (!isRandQuestions) viewModel.updateIsTestPassed(title = it.themeItemTitle, isTestPassed = true)
                 }
 
                 testIsEnded = true
@@ -177,7 +177,7 @@ class TaskScreen : Fragment() {
 
 
                 tvQuestion.text = it.question
-                viewModel.getAnswerList(it.question)
+                viewModel.getAnswerList(it.question, isRandQuestions)
             }
 
             viewModel.answerList.observe(viewLifecycleOwner) {
@@ -196,7 +196,7 @@ class TaskScreen : Fragment() {
                                 task.status = TaskItem.STATUS.RIGHT
                                 rightAnswers++
                                 val newAnswer = answer.copy(type = Answer.TYPE.RIGHT)
-                                viewModel.insertAnswer(newAnswer)
+                                viewModel.insertAnswer(newAnswer, isRandQuestions)
                             } else {
                                 task.status = TaskItem.STATUS.FAIL
                                 wrongAnswers++
@@ -205,13 +205,14 @@ class TaskScreen : Fragment() {
                                     it.find { answer -> answer.name == task.rightAnswer }
                                         ?.copy(type = Answer.TYPE.RIGHT)
 
-                                viewModel.insertAnswer(newAnswer)
+                                viewModel.insertAnswer(newAnswer, isRandQuestions)
 
                                 rightAnswer?.let {
-                                    viewModel.insertAnswer(rightAnswer)
+                                    viewModel.insertAnswer(rightAnswer, isRandQuestions)
                                 }
                             }
-                            viewModel.nextQuestion(task, step++)
+
+                            viewModel.nextQuestion(task, step++, isRandQuestions)
                         }
                     }
                 }
@@ -268,17 +269,20 @@ class TaskScreen : Fragment() {
             }
         }
 
-        currentTask?.let {
-            viewModel.updateRightAnswers(title = it.themeItemTitle, rightAnswers = rightAnswers)
-            viewModel.updateWrongAnswers(title = it.themeItemTitle, wrongAnswers = wrongAnswers)
+        if (!isRandQuestions) {
+            currentTask?.let {
+                viewModel.updateRightAnswers(title = it.themeItemTitle, rightAnswers = rightAnswers)
+                viewModel.updateWrongAnswers(title = it.themeItemTitle, wrongAnswers = wrongAnswers)
 
-            val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
-            val parsed = dateFormat.parse(binding.tvTime.text.toString())?.time ?: 0L
-            viewModel.updateTotalTestTime(
-                title = it.themeItemTitle,
-                totalTestTime = parsed
-            )
+                val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+                val parsed = dateFormat.parse(binding.tvTime.text.toString())?.time ?: 0L
+                viewModel.updateTotalTestTime(
+                    title = it.themeItemTitle,
+                    totalTestTime = parsed
+                )
+            }
         }
+
         _binding = null
     }
 

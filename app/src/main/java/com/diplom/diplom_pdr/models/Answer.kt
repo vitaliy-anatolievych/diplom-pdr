@@ -10,7 +10,7 @@ data class Answer(
     @ColumnInfo(name = "id")
     val id: Int? = null,
     val name: String,
-    val type: TYPE,
+    var type: TYPE,
     val taskItemQuestion: String,
 ) {
 

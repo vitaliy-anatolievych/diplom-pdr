@@ -1,5 +1,6 @@
 package com.diplom.diplom_pdr.presentation.utils.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -38,42 +39,83 @@ class QuestViewModel(
 
     var questionList: List<TaskScreen.Question>? = null
 
+    private val randAnswers = mutableListOf<Answer>()
 
-    fun insertAnswer(answer: Answer) {
-        CoroutineScope(Dispatchers.IO).launch {
-            localStorage.insertAnswer(answer)
+    fun insertAnswer(answer: Answer, isRandQuestions: Boolean) {
+        if (!isRandQuestions) {
+            CoroutineScope(Dispatchers.IO).launch {
+                localStorage.insertAnswer(answer)
+            }
+        } else {
+            randAnswers.add(answer)
         }
     }
 
-    fun getAnswerList(question: String) {
+    fun getAnswerList(question: String, isRandQuestions: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             val list = localStorage.getAnswerList(question)
                 .map {
                     it.copy(name = it.name.replace("|", ""))
                 }
 
-            _answerList.postValue(list)
+
+            if (isRandQuestions) {
+                list.map { task -> task.type = Answer.TYPE.DEFAULT }
+                if (randAnswers.size > 0) {
+                    var isFindAnswer = false
+                    val cacheAnswers = mutableListOf<Answer>()
+                    randAnswers.forEach {
+                        if (it.taskItemQuestion == question) {
+                            isFindAnswer = true
+                            cacheAnswers.add(it)
+                        }
+                    }
+
+                    if (isFindAnswer) {
+                        // update temp answers
+
+                        val resultList = list.toMutableList()
+
+                        cacheAnswers.forEach { answer ->
+                            val index = resultList.indexOfFirst { it.name == answer.name }
+                            resultList[index] = answer
+                        }
+                        _answerList.postValue(resultList)
+                    } else {
+                        _answerList.postValue(list)
+                    }
+                } else {
+                    _answerList.postValue(list)
+                }
+
+            } else {
+                _answerList.postValue(list)
+            }
         }
     }
 
+    // +
     fun updateRightAnswers(title: String, rightAnswers: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             localStorage.updateRightAnswers(title, rightAnswers)
         }
     }
 
+    // +
     fun updateWrongAnswers(title: String, wrongAnswers: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             localStorage.updateWrongAnswers(title, wrongAnswers)
         }
     }
 
+    // +
     fun updateIsTestPassed(title: String, isTestPassed: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             localStorage.updateIsTestPassed(title, isTestPassed)
         }
     }
 
+    // +
     fun updateTotalTestTime(title: String, totalTestTime: Long) {
         CoroutineScope(Dispatchers.IO).launch {
             localStorage.updateTotalTestTime(title, totalTestTime)
@@ -96,15 +138,15 @@ class QuestViewModel(
         }
     }
 
-    fun nextQuestion(taskItem: TaskItem, step: Int) {
+    fun nextQuestion(taskItem: TaskItem, step: Int, isRandQuestions: Boolean) {
         _answerList.value?.let {
             if (step < questionList?.size!! - 1) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    localStorage.updateTask(taskItem)
+                    if (!isRandQuestions) localStorage.updateTask(taskItem)
                     val newTaskItem = questionList!![step + 1].taskItem
                     newTaskItem.status = TaskItem.STATUS.SELECTED
                     _currentQuest.postValue(newTaskItem)
-                    localStorage.updateTask(newTaskItem)
+                    if (!isRandQuestions) localStorage.updateTask(newTaskItem)
 
                     val newTaskList =
                         localStorage.getAllTasks(newTaskItem.themeItemTitle)
@@ -113,7 +155,7 @@ class QuestViewModel(
                 }
             } else {
                 CoroutineScope(Dispatchers.IO).launch {
-                    localStorage.updateTask(taskItem)
+                    if (!isRandQuestions) localStorage.updateTask(taskItem)
                     val newTaskList =
                         localStorage.getAllTasks(taskItem.themeItemTitle)
                             .toMutableList()

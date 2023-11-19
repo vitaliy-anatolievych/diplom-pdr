@@ -38,12 +38,16 @@ class TestsScreen : Fragment() {
             viewModel.getRandomQuestions()
             viewModel.getFavoriteTests()
 
-            viewModel.questionsForADayData.observe(viewLifecycleOwner) {
-                questionsForADayData = it
+            viewModel.questionsForADayData.observe(viewLifecycleOwner) { list ->
+                // clear
+                list.map { task -> task.status = TaskItem.STATUS.CLOSE }
+                questionsForADayData = list
             }
 
-            viewModel.questionsRandomData.observe(viewLifecycleOwner) {
-                questionsRandomData = it
+            viewModel.questionsRandomData.observe(viewLifecycleOwner) { list ->
+                // clear
+                list.map { task -> task.status = TaskItem.STATUS.CLOSE }
+                questionsRandomData = list
             }
 
             viewModel.favoriteData.observe(viewLifecycleOwner) {
@@ -53,7 +57,10 @@ class TestsScreen : Fragment() {
             btnQuestionOfDay.setOnClickListener {
                 if (questionsForADayData.isNotEmpty()) {
                     val action =
-                        TestsScreenDirections.actionTestsScreenToTaskScreen(questionsForADayData.toTypedArray())
+                        TestsScreenDirections.actionTestsScreenToTaskScreen(
+                            questionsForADayData.toTypedArray(),
+                            true
+                        )
                     findNavController().navigate(action)
                 } else {
                     Toast.makeText(
