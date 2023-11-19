@@ -1,16 +1,16 @@
 package com.diplom.diplom_pdr.presentation.screens
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.diplom.diplom_pdr.databinding.FragmentTestsStatsBinding
 import com.diplom.diplom_pdr.presentation.utils.viewmodels.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.time.Duration
 
 class TestStatsScreen : Fragment() {
 
@@ -20,6 +20,7 @@ class TestStatsScreen : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModel()
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,9 +47,14 @@ class TestStatsScreen : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun formatMilliseconds(milliseconds: Long): String {
-        val format = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-        return format.format(Date(milliseconds))
+        val duration = Duration.ofMillis(milliseconds)
+        val hours = duration.toHours()
+        val minutes = duration.toMinutes()
+        val seconds = duration.toSeconds()
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
     override fun onDestroyView() {

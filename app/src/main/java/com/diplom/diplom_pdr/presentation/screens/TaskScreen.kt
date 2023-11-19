@@ -40,6 +40,8 @@ class TaskScreen : Fragment() {
     private var isRandQuestions = false
     private var testIsEnded = false
 
+    var totalTime = 0L
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -244,6 +246,7 @@ class TaskScreen : Fragment() {
 
     private fun startTimer() {
         timer = CountUpTimer(1000) { elapsedTime ->
+            totalTime = elapsedTime
             binding.tvTime.text = formatMilliseconds(elapsedTime)
         }
 
@@ -274,11 +277,9 @@ class TaskScreen : Fragment() {
                 viewModel.updateRightAnswers(title = it.themeItemTitle, rightAnswers = rightAnswers)
                 viewModel.updateWrongAnswers(title = it.themeItemTitle, wrongAnswers = wrongAnswers)
 
-                val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
-                val parsed = dateFormat.parse(binding.tvTime.text.toString())?.time ?: 0L
                 viewModel.updateTotalTestTime(
                     title = it.themeItemTitle,
-                    totalTestTime = parsed
+                    totalTestTime = totalTime
                 )
             }
         }
