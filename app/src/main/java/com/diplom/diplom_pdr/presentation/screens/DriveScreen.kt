@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.diplom.diplom_pdr.R
 import com.diplom.diplom_pdr.databinding.FragmentDriveBinding
 import com.diplom.diplom_pdr.presentation.utils.AppPowerManager
+import com.diplom.diplom_pdr.presentation.utils.CountUpTimer
 import com.diplom.diplom_pdr.presentation.utils.viewmodels.TripViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
@@ -37,6 +38,9 @@ class DriveScreen : Fragment() {
     private var speedList = mutableListOf<Int>()
 
     private var isUniqExcess = false
+
+    private var timer: CountUpTimer? = null
+    private var tripTimeInSeconds = 0L
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -123,6 +127,10 @@ class DriveScreen : Fragment() {
 
         }
 
+        timer = CountUpTimer(1000) {
+            tripTimeInSeconds = it
+        }
+
         return binding.root
     }
 
@@ -150,16 +158,19 @@ class DriveScreen : Fragment() {
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
         val startT = LocalDateTime.now().format(formatter)
         startTime = startT
+        timer?.start()
 
         btnAction1.setOnClickListener {
             if (!isDrivePaused) {
                 iconAction1.setImageResource(R.drawable.ic_play)
                 tvAction1.text = getString(R.string.start)
                 viewModel.stopTrip()
+                timer?.stop()
             } else {
                 iconAction1.setImageResource(R.drawable.ic_pause)
                 tvAction1.text = getString(R.string.pause)
                 viewModel.startTrip()
+                timer?.start()
             }
 
             isDrivePaused = !isDrivePaused
@@ -172,6 +183,7 @@ class DriveScreen : Fragment() {
         btnAction2.setOnClickListener {
             // nav stats
             viewModel.stopTrip()
+            timer?.stop()
             if (distance != 0.0) {
 
                 var averageSpeed = 0
@@ -190,7 +202,8 @@ class DriveScreen : Fragment() {
                         emergencySlowDown = emergencySlowDown,
                         startTime = startTime,
                         endTime = endT,
-                        excessOver20 = excessOver20
+                        excessOver20 = excessOver20,
+                        tripTime = tripTimeInSeconds
                     )
                 findNavController().navigate(action)
 

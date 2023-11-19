@@ -39,6 +39,13 @@ class MainViewModel(
     val userData: LiveData<UserEntity>
         get() = _userData
 
+
+    fun updateTripRating(tripRating: Int) {
+        val user = _userData.value!!
+        val userUpd = user.copy(driveRating = user.driveRating + tripRating)
+        updateUser(userUpd)
+    }
+
     fun updateUser(userEntity: UserEntity) {
         CoroutineScope(Dispatchers.IO).launch {
             localStorage.insertUser(userEntity)

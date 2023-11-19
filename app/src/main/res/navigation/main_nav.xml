@@ -97,6 +97,10 @@
         <argument
             android:name="excessOver20"
             app:argType="integer" />
+        <argument
+            android:name="tripTime"
+            app:argType="long"
+            android:defaultValue="0L" />
     </fragment>
     <fragment
         android:id="@+id/statsScreen"

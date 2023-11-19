@@ -1,6 +1,7 @@
 package com.diplom.diplom_pdr.presentation.screens
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,7 +37,10 @@ class ResultDriveScreen : Fragment() {
 
         with(binding) {
 
-            tvDistance.text = String.format(getString(R.string.s_km), String.format("%.1f", args.distance.toDouble()))
+            tvDistance.text = String.format(
+                getString(R.string.s_km),
+                String.format("%.1f", args.distance.toDouble())
+            )
             tvAverageDistance.text = String.format(getString(R.string.s_km_hour), args.medianSpeed)
             tvOver20.text = args.excessOver20.toString()
             tvExcessiveSpeed.text = args.excessiveSpeed.toString()
@@ -62,7 +66,50 @@ class ResultDriveScreen : Fragment() {
             }
         }
 
+        calculateTripRating(
+            tripTimeInSeconds = args.tripTime,
+            distance = args.distance.toDouble(),
+            averageSpeed = args.medianSpeed,
+            countOfEmergencyDown = args.emergencySlowDown,
+            countOfExcessiveSpeed = args.excessiveSpeed,
+            countExcessiveOver20 = args.excessOver20
+        )
+
         return binding.root
+    }
+
+    private fun calculateTripRating(
+        tripTimeInSeconds: Long,
+        distance: Double,
+        averageSpeed: Int,
+        countOfEmergencyDown: Int,
+        countOfExcessiveSpeed: Int,
+        countExcessiveOver20: Int
+        ) {
+        // 668857 | 11.774730493720375
+        Log.e("TRIP", "$tripTimeInSeconds | $distance")
+
+        if (tripTimeInSeconds > 600_000 && distance > 3.0) {
+
+            var tripRating = 0
+
+            // fines
+            if (averageSpeed >= 35) tripRating -= 1
+            if (countExcessiveOver20 >= 5) tripRating -= 2
+            if (countExcessiveOver20 in 2..5) tripRating -= 1
+            if (countOfEmergencyDown >= 2) tripRating -= 2
+            if (countOfEmergencyDown == 1)  tripRating -= 1
+            if (countOfExcessiveSpeed >= 1)  tripRating -= 1
+
+            // rewards
+            if (averageSpeed < 35) tripRating += 1
+            if (countExcessiveOver20 in 0 .. 1) tripRating += 1
+            if (countOfEmergencyDown in 0 .. 1) tripRating += 1
+            if (countOfExcessiveSpeed == 0) tripRating += 1
+
+            viewModel.updateTripRating(tripRating)
+
+        }
     }
 
     override fun onDestroyView() {
