@@ -43,7 +43,9 @@ class MainViewModel(
     fun updateTripRating(tripRating: Int) {
         val user = _userData.value!!
         val userUpd = user.copy(driveRating = user.driveRating + tripRating)
-        updateUser(userUpd)
+        if (userUpd.driveRating < 100) {
+            updateUser(userUpd)
+        }
     }
 
     fun updateUser(userEntity: UserEntity) {
