@@ -186,18 +186,20 @@ class DriveScreen : Fragment() {
             timer?.stop()
             if (distance != 0.0) {
 
-                var averageSpeed = 0
-                for (speed in speedList) {
-                    averageSpeed += speed
-                }
-
-                averageSpeed /= speedList.size
+                val timeToKm = ((tripTimeInSeconds.toDouble() / 1000) / 60) / 60
+                Log.e("TRIP", "$timeToKm | $distance")
+                val averageSpeed = distance / timeToKm
+//                for (speed in speedList) {
+//                    averageSpeed += speed
+//                }
+//
+//                averageSpeed /= speedList.size
 
                 val endT = LocalDateTime.now().format(formatter)
                 val action = DriveScreenDirections
                     .actionDriveScreenToResultDriveScreen(
                         distance = distance.toString(),
-                        medianSpeed = averageSpeed,
+                        medianSpeed = averageSpeed.toInt(),
                         excessiveSpeed = excessiveSpeed,
                         emergencySlowDown = emergencySlowDown,
                         startTime = startTime,
