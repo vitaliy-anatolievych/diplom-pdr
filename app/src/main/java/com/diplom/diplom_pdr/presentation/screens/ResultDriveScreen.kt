@@ -102,7 +102,7 @@ class ResultDriveScreen : Fragment() {
 
             val user = viewModel.userData.value!!.copy()
             user.enterDate = tomorrow.time
-            user.currentInterval += 2
+            user.currentInterval += 1
             viewModel.updateUser(user)
 
             var tripRating = 0

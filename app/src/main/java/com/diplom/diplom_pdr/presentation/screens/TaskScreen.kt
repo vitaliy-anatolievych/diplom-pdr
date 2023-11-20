@@ -302,7 +302,7 @@ class TaskScreen : Fragment() {
 
             if (user.enterDate!! != tomorrow.time) {
                 user.enterDate = tomorrow.time
-                user.currentInterval += 2
+                user.currentInterval += 1
                 mainViewModel.updateUser(user)
             }
         }
