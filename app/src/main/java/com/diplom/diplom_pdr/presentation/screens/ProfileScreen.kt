@@ -33,21 +33,6 @@ class ProfileScreen : Fragment() {
                 tvCurrentSplit.text = it.currentInterval.toString()
                 tvCurrentCurrentRating.text = it.testRating.toString()
 
-
-                when (it.currentInterval) {
-                    in 0..40 -> {
-                        cardCurrentSplit.setCardBackgroundColor(requireContext().getColor(android.R.color.holo_red_dark))
-                    }
-
-                    in 40..80 -> {
-                        cardCurrentSplit.setCardBackgroundColor(requireContext().getColor(android.R.color.holo_orange_light))
-                    }
-
-                    in 80..100 -> {
-                        cardCurrentSplit.setCardBackgroundColor(requireContext().getColor(android.R.color.holo_green_light))
-                    }
-                }
-
                 when (it.testRating) {
                     in 0..40 -> {
                         cardCurrentRating.setCardBackgroundColor(requireContext().getColor(android.R.color.holo_red_dark))

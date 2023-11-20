@@ -268,7 +268,7 @@ class TaskScreen : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if (isRandQuestions && !testIsEnded) {
+        if (!isRandQuestions && !testIsEnded) {
             val userData = mainViewModel.userData.value
             userData?.let { user ->
                 mainViewModel.updateUser(user.copy(testRating = user.testRating - 5))

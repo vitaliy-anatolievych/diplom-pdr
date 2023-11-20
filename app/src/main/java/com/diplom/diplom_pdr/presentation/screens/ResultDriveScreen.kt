@@ -92,6 +92,15 @@ class ResultDriveScreen : Fragment() {
 
         if (tripTimeInSeconds > 600_000 && distance > 3.0) {
 
+            val today = Calendar.getInstance()
+            today.add(Calendar.DAY_OF_YEAR, 1)
+            val tomorrow = today.time
+
+            val user = viewModel.userData.value!!.copy()
+            user.enterDate = tomorrow.time
+            user.currentInterval += 2
+            viewModel.updateUser(user)
+
             var tripRating = 0
 
             // fines
@@ -111,14 +120,6 @@ class ResultDriveScreen : Fragment() {
             viewModel.updateTripRating(tripRating)
 
 
-            val today = Calendar.getInstance()
-            today.add(Calendar.DAY_OF_YEAR, 1)
-            val tomorrow = today.time
-
-            val user = viewModel.userData.value!!.copy()
-            user.enterDate = tomorrow.time
-            user.currentInterval += 2
-            viewModel.updateUser(user)
         }
     }
 
