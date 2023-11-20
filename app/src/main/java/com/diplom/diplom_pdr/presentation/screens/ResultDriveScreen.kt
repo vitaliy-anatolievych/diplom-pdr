@@ -9,8 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.diplom.diplom_pdr.R
-import com.diplom.diplom_pdr.app.App
-import com.diplom.diplom_pdr.databinding.FragmentDriveBinding
 import com.diplom.diplom_pdr.databinding.FragmentDriveResultBinding
 import com.diplom.diplom_pdr.models.DriveStatsModel
 import com.diplom.diplom_pdr.presentation.utils.viewmodels.MainViewModel
