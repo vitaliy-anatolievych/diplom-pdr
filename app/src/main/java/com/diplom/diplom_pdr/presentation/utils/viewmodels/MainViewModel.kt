@@ -55,7 +55,7 @@ class MainViewModel(
         }
     }
 
-    fun getUser() {
+    private fun getUser() {
         CoroutineScope(Dispatchers.IO).launch {
             _userData.postValue(localStorage.getUser())
         }

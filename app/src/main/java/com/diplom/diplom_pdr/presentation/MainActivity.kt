@@ -9,11 +9,14 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.NavHostFragment
 import com.diplom.diplom_pdr.R
 import com.diplom.diplom_pdr.databinding.ActivityMainBinding
+import com.diplom.diplom_pdr.models.UserEntity
 import com.diplom.diplom_pdr.presentation.utils.viewmodels.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
     private lateinit var _binding: ActivityMainBinding
@@ -32,6 +35,49 @@ class MainActivity : AppCompatActivity() {
         viewModel.userData.observe(this) {
             _binding.tvFlame.text = it.driveRating.toString()
             _binding.tvStar.text = it.testRating.toString()
+        }
+
+
+        _binding.root.postDelayed({
+            viewModel.userData.value?.let {
+                if (it.enterDate == null) {
+                    it.enterDate = System.currentTimeMillis()
+                    viewModel.updateUser(it)
+                } else {
+                    val result = checkDate(it)
+                    if (!result) {
+                        it.currentInterval = 0
+                        viewModel.updateUser(it)
+                    }
+                }
+            }
+        }, 1500)
+
+    }
+
+    private fun checkDate(userEntity: UserEntity): Boolean {
+        val systemTime = Calendar.getInstance()
+        systemTime.timeInMillis = System.currentTimeMillis()
+
+        systemTime.clear(Calendar.HOUR_OF_DAY)
+        systemTime.clear(Calendar.MINUTE)
+        systemTime.clear(Calendar.SECOND)
+        systemTime.clear(Calendar.MILLISECOND)
+
+        val userTime = Calendar.getInstance()
+        userTime.timeInMillis = userEntity.enterDate!!
+
+        userTime.clear(Calendar.HOUR_OF_DAY)
+        userTime.clear(Calendar.MINUTE)
+        userTime.clear(Calendar.SECOND)
+        userTime.clear(Calendar.MILLISECOND)
+
+        val comparisonResult = systemTime.compareTo(userTime)
+        Log.e("TIME", "$comparisonResult")
+        return when {
+            comparisonResult == 0 -> true
+            comparisonResult < 0 -> true
+            else -> false
         }
     }
 

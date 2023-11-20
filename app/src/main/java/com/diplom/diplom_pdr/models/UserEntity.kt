@@ -14,5 +14,7 @@ data class UserEntity(
     @ColumnInfo(name = "drive_rating")
     var driveRating: Int,
     @ColumnInfo(name = "current_interval")
-    var currentInterval: Int = 0
+    var currentInterval: Int = 0,
+    @ColumnInfo(name = "enter_date")
+    var enterDate: Long? = null
 )
