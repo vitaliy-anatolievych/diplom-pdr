@@ -1,6 +1,7 @@
 package com.diplom.diplom_pdr.db
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -15,7 +16,7 @@ import com.diplom.diplom_pdr.models.UserEntity
 @TypeConverters(RoomTypeConverters::class)
 @Database(
     entities = [TaskItem::class, ThemeItem::class, TestsResultEntity::class, DriveStatsModel::class, Answer::class, UserEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 abstract class MainDataBase : RoomDatabase() {
