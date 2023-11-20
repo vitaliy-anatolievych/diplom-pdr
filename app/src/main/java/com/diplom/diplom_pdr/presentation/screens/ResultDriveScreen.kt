@@ -16,6 +16,7 @@ import com.diplom.diplom_pdr.models.DriveStatsModel
 import com.diplom.diplom_pdr.presentation.utils.viewmodels.MainViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 class ResultDriveScreen : Fragment() {
 
@@ -109,6 +110,15 @@ class ResultDriveScreen : Fragment() {
 
             viewModel.updateTripRating(tripRating)
 
+
+            val today = Calendar.getInstance()
+            today.add(Calendar.DAY_OF_YEAR, 1)
+            val tomorrow = today.time
+
+            val user = viewModel.userData.value!!.copy()
+            user.enterDate = tomorrow.time
+            user.currentInterval += 2
+            viewModel.updateUser(user)
         }
     }
 

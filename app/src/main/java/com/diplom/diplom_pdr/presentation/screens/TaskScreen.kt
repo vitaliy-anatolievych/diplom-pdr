@@ -1,7 +1,6 @@
 package com.diplom.diplom_pdr.presentation.screens
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +22,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import kotlin.time.Duration.Companion.milliseconds
 
 class TaskScreen : Fragment() {
 
@@ -115,7 +113,6 @@ class TaskScreen : Fragment() {
                             in 1..2 -> mainViewModel.updateUser(user.copy(testRating = user.testRating + 5))
                             in 3..5 -> {}
                             else -> {
-                                Log.e("updateUser", "TASK3")
                                 mainViewModel.updateUser(user.copy(testRating = user.testRating - 5))
                             }
                         }
@@ -274,7 +271,6 @@ class TaskScreen : Fragment() {
         if (isRandQuestions && !testIsEnded) {
             val userData = mainViewModel.userData.value
             userData?.let { user ->
-                Log.e("updateUser", "TASK1")
                 mainViewModel.updateUser(user.copy(testRating = user.testRating - 5))
             }
         }
@@ -299,7 +295,6 @@ class TaskScreen : Fragment() {
             val user = mainViewModel.userData.value!!.copy()
             user.enterDate = tomorrow.time
             user.currentInterval += 2
-            Log.e("updateUser", "TASK2")
             mainViewModel.updateUser(user)
         }
 
