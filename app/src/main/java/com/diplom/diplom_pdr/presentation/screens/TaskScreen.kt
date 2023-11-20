@@ -290,12 +290,21 @@ class TaskScreen : Fragment() {
         if (isRandQuestions && testIsEnded) {
             val today = Calendar.getInstance()
             today.add(Calendar.DAY_OF_YEAR, 1)
+
+            today.clear(Calendar.HOUR_OF_DAY)
+            today.clear(Calendar.MINUTE)
+            today.clear(Calendar.SECOND)
+            today.clear(Calendar.MILLISECOND)
+
             val tomorrow = today.time
 
             val user = mainViewModel.userData.value!!.copy()
-            user.enterDate = tomorrow.time
-            user.currentInterval += 2
-            mainViewModel.updateUser(user)
+
+            if (user.enterDate!! != tomorrow.time) {
+                user.enterDate = tomorrow.time
+                user.currentInterval += 2
+                mainViewModel.updateUser(user)
+            }
         }
 
         _binding = null

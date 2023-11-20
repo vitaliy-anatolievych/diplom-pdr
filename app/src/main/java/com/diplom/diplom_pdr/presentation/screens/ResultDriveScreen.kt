@@ -94,6 +94,12 @@ class ResultDriveScreen : Fragment() {
 
             val today = Calendar.getInstance()
             today.add(Calendar.DAY_OF_YEAR, 1)
+
+            today.clear(Calendar.HOUR_OF_DAY)
+            today.clear(Calendar.MINUTE)
+            today.clear(Calendar.SECOND)
+            today.clear(Calendar.MILLISECOND)
+
             val tomorrow = today.time
 
             val user = viewModel.userData.value!!.copy()
