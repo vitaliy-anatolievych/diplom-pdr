@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "f5e173cd74dfa6bde546049ad7935ced",
+    "identityHash": "4757836b52e71e844cef3b7bf4a5941e",
     "entities": [
       {
         "tableName": "task_item",
@@ -262,7 +262,7 @@
       },
       {
         "tableName": "UserEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `test_rating` INTEGER NOT NULL, `drive_rating` INTEGER NOT NULL, `current_interval` INTEGER NOT NULL, `enter_date` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `rating` INTEGER NOT NULL, `current_interval` INTEGER NOT NULL, `enter_date` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -271,14 +271,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "testRating",
-            "columnName": "test_rating",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "driveRating",
-            "columnName": "drive_rating",
+            "fieldPath": "rating",
+            "columnName": "rating",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -308,7 +302,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f5e173cd74dfa6bde546049ad7935ced')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4757836b52e71e844cef3b7bf4a5941e')"
     ]
   }
 }

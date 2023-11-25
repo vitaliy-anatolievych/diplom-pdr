@@ -42,8 +42,8 @@ class MainViewModel(
 
     fun updateTripRating(tripRating: Int) {
         val user = _userData.value!!
-        val userUpd = user.copy(driveRating = user.driveRating + tripRating)
-        if (userUpd.driveRating < 100) {
+        val userUpd = user.copy(rating = user.rating + tripRating)
+        if (userUpd.rating < 100) {
             updateUser(userUpd)
         }
     }
@@ -100,7 +100,7 @@ class MainViewModel(
                         totalTime = 0L
                     )
                 )
-                updateUser(UserEntity(driveRating = 100, testRating = 60))
+                updateUser(UserEntity(currentInterval = 0, rating = 60))
             } else {
                 _themeData.postValue(localStorage.getAllData())
                 getUser()

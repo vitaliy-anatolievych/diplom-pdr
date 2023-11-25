@@ -107,14 +107,21 @@ class TaskScreen : Fragment() {
 
                 if (isRandQuestions) {
                     val userData = mainViewModel.userData.value
+
+                    var calculateRating = 0
                     userData?.let { user ->
                         when (wrongAnswers) {
-                            0 -> mainViewModel.updateUser(user.copy(testRating = user.testRating + 10))
-                            in 1..2 -> mainViewModel.updateUser(user.copy(testRating = user.testRating + 5))
+                            0 -> calculateRating =+ 10
+                            in 1..2 -> calculateRating =+ 5
                             in 3..5 -> {}
                             else -> {
-                                mainViewModel.updateUser(user.copy(testRating = user.testRating - 5))
+                                calculateRating =- 5
                             }
+                        }
+
+                        val newRating = user.rating + calculateRating
+                        if (newRating < 100) {
+                            mainViewModel.updateUser(user.copy(rating = newRating))
                         }
                     }
                 }
@@ -271,7 +278,7 @@ class TaskScreen : Fragment() {
         if (!isRandQuestions && !testIsEnded) {
             val userData = mainViewModel.userData.value
             userData?.let { user ->
-                mainViewModel.updateUser(user.copy(testRating = user.testRating - 5))
+                mainViewModel.updateUser(user.copy(rating = user.rating - 5))
             }
         }
 

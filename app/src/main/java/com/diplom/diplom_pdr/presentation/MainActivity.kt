@@ -9,7 +9,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.NavHostFragment
 import com.diplom.diplom_pdr.R
 import com.diplom.diplom_pdr.databinding.ActivityMainBinding
@@ -33,8 +32,8 @@ class MainActivity : AppCompatActivity() {
         loadBottomNav()
 
         viewModel.userData.observe(this) {
-            _binding.tvFlame.text = it.driveRating.toString()
-            _binding.tvStar.text = it.testRating.toString()
+            _binding.tvFlame.text = it.currentInterval.toString()
+            _binding.tvStar.text = it.rating.toString()
         }
 
 

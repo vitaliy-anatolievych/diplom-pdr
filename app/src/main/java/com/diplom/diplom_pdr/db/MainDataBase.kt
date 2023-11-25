@@ -17,7 +17,6 @@ import com.diplom.diplom_pdr.models.UserEntity
 @Database(
     entities = [TaskItem::class, ThemeItem::class, TestsResultEntity::class, DriveStatsModel::class, Answer::class, UserEntity::class],
     version = 4,
-    autoMigrations = [AutoMigration(from = 3, to = 4)],
     exportSchema = true
 )
 abstract class MainDataBase : RoomDatabase() {

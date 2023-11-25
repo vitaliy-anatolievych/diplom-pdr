@@ -31,9 +31,9 @@ class ProfileScreen : Fragment() {
 
             viewModel.userData.observe(viewLifecycleOwner) {
                 tvCurrentSplit.text = it.currentInterval.toString()
-                tvCurrentCurrentRating.text = it.testRating.toString()
+                tvCurrentCurrentRating.text = it.rating.toString()
 
-                when (it.testRating) {
+                when (it.rating) {
                     in 0..40 -> {
                         cardCurrentRating.setCardBackgroundColor(requireContext().getColor(android.R.color.holo_red_dark))
                     }
