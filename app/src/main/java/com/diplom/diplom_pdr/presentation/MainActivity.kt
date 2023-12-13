@@ -2,10 +2,10 @@ package com.diplom.diplom_pdr.presentation
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -21,12 +21,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var _binding: ActivityMainBinding
 
     private val viewModel: MainViewModel by viewModel()
-    private lateinit var pLauncher: ActivityResultLauncher<Array<String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater).also { setContentView(it.root) }
-        registerPermissionListener()
         requestPermission()
         viewModel.fillData()
         loadBottomNav()
@@ -35,7 +33,6 @@ class MainActivity : AppCompatActivity() {
             _binding.tvFlame.text = it.currentInterval.toString()
             _binding.tvStar.text = it.rating.toString()
         }
-
 
         _binding.root.postDelayed({
             viewModel.userData.value?.let {
@@ -52,6 +49,25 @@ class MainActivity : AppCompatActivity() {
             }
         }, 1500)
 
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        Log.e("PERMISSIONS", "${permissions.entries}")
+        permissions.entries.forEach { permission ->
+            with(permission) {
+                if (!value) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Надайте дозвіл для використання программи",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    this@MainActivity.finish()
+                    return@registerForActivityResult
+                }
+            }
+        }
     }
 
     private fun checkDate(userEntity: UserEntity): Boolean {
@@ -72,7 +88,6 @@ class MainActivity : AppCompatActivity() {
         userTime.clear(Calendar.MILLISECOND)
 
         val comparisonResult = systemTime.compareTo(userTime)
-        Log.e("TIME", "$comparisonResult")
         return when {
             comparisonResult == 0 -> true
             comparisonResult < 0 -> true
@@ -81,81 +96,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestPermission() {
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-            }
+        val permissions = mutableListOf<String>()
 
-            ContextCompat.checkSelfPermission(
+        if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-            }
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
 
-            ContextCompat.checkSelfPermission(
+        if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-            }
-
-            else -> {
-                pLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                    )
-                )
-            }
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
-    }
 
-    private fun registerPermissionListener() {
-        pLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                Log.e("MAP", "${it}")
-                if (it[Manifest.permission.ACCESS_FINE_LOCATION] == false) {
-                    Toast.makeText(
-                        this,
-                        "Надайте дозвіл для використання программи",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    this.finish()
-                }
-                if (it[Manifest.permission.ACCESS_COARSE_LOCATION] == false) {
-                    Toast.makeText(
-                        this,
-                        "Надайте дозвіл для використання программи",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    this.finish()
-                }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//            if (ContextCompat.checkSelfPermission(
+//                    this,
+//                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+//                ) == PackageManager.PERMISSION_DENIED
+//            ) {
+//                permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+//            }
+//        }
 
-                if (it[Manifest.permission.ACCESS_BACKGROUND_LOCATION] == false) {
-                    Toast.makeText(
-                        this,
-                        "Надайте дозвіл для використання программи",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    this.finish()
-                }
-            }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode == 100) {
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Не надано дозвін геолокації", Toast.LENGTH_SHORT).show()
-                this.finish()
-            }
+        Log.e("PERMISSIONS", "$permissions")
+        if (permissions.isNotEmpty()) {
+            requestPermissionLauncher.launch(permissions.toTypedArray())
         }
     }
 
