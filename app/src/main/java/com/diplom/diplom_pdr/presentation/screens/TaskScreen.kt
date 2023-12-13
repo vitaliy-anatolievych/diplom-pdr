@@ -113,11 +113,11 @@ class TaskScreen : Fragment() {
                     var calculateRating = 0
                     userData?.let { user ->
                         when (wrongAnswers) {
-                            0 -> calculateRating =+ 10
-                            in 1..2 -> calculateRating =+ 5
+                            0 -> calculateRating =+ 2
+                            in 1..2 -> calculateRating =+ 1
                             in 3..5 -> {}
                             else -> {
-                                calculateRating =- 5
+                                calculateRating =- 1
                             }
                         }
 
@@ -280,7 +280,7 @@ class TaskScreen : Fragment() {
         if (!isRandQuestions && !testIsEnded && !isQuestionOfDay) {
             val userData = mainViewModel.userData.value
             userData?.let { user ->
-                mainViewModel.updateUser(user.copy(rating = user.rating - 5))
+                mainViewModel.updateUser(user.copy(rating = user.rating - 2))
             }
         }
 
