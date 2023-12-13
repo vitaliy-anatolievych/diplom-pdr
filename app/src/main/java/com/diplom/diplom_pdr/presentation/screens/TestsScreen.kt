@@ -59,7 +59,8 @@ class TestsScreen : Fragment() {
                     val action =
                         TestsScreenDirections.actionTestsScreenToTaskScreen(
                             questionsForADayData.toTypedArray(),
-                            true
+                            isRandQuestion =  true,
+                            isQuestionOfDay = true
                         )
                     findNavController().navigate(action)
                 } else {
@@ -80,7 +81,8 @@ class TestsScreen : Fragment() {
                     val action =
                         TestsScreenDirections.actionTestsScreenToTaskScreen(
                             questionsRandomData.toTypedArray(),
-                            true
+                            isRandQuestion =  true,
+                            isQuestionOfDay = false
                         )
 
                     findNavController().navigate(action)

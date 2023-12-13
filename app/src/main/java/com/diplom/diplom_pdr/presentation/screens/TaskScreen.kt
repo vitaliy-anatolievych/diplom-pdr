@@ -39,6 +39,7 @@ class TaskScreen : Fragment() {
     private var wrongAnswers = 0
 
     private var isRandQuestions = false
+    private var isQuestionOfDay = false
     private var testIsEnded = false
 
     var totalTime = 0L
@@ -54,6 +55,7 @@ class TaskScreen : Fragment() {
         val tasks = bundle.taskItem.toMutableList()
 
         isRandQuestions = bundle.isRandQuestion
+        isQuestionOfDay = bundle.isQuestionOfDay
 
         viewModel.setCurrentTasksList(tasks)
 
@@ -105,7 +107,7 @@ class TaskScreen : Fragment() {
 
                 testIsEnded = true
 
-                if (isRandQuestions) {
+                if (isRandQuestions && !isQuestionOfDay) {
                     val userData = mainViewModel.userData.value
 
                     var calculateRating = 0
@@ -275,7 +277,7 @@ class TaskScreen : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if (!isRandQuestions && !testIsEnded) {
+        if (!isRandQuestions && !testIsEnded && !isQuestionOfDay) {
             val userData = mainViewModel.userData.value
             userData?.let { user ->
                 mainViewModel.updateUser(user.copy(rating = user.rating - 5))
@@ -294,7 +296,7 @@ class TaskScreen : Fragment() {
             }
         }
 
-        if (isRandQuestions && testIsEnded) {
+        if (isRandQuestions && testIsEnded && !isQuestionOfDay) {
             val today = Calendar.getInstance()
             today.add(Calendar.DAY_OF_YEAR, 1)
 

@@ -47,12 +47,11 @@ class TestStatsScreen : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.S)
     private fun formatMilliseconds(milliseconds: Long): String {
         val duration = Duration.ofMillis(milliseconds)
         val hours = duration.toHours()
         val minutes = duration.toMinutes()
-        val seconds = duration.toSeconds()
+        val seconds = duration.seconds
 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
