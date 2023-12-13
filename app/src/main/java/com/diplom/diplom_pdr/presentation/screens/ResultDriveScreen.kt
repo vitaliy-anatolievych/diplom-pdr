@@ -111,18 +111,18 @@ class ResultDriveScreen : Fragment() {
             var tripRating = 0
 
             // fines
-            if (averageSpeed >= 35) tripRating -= 1
+            if (averageSpeed > 35) tripRating -= 1
+            if (countExcessiveOver20 in 2..4) tripRating -= 1
             if (countExcessiveOver20 >= 5) tripRating -= 2
-            if (countExcessiveOver20 in 2..5) tripRating -= 1
-            if (countOfEmergencyDown >= 2) tripRating -= 2
-            if (countOfEmergencyDown == 1)  tripRating -= 1
-            if (countOfExcessiveSpeed >= 1)  tripRating -= 1
+            if (countOfExcessiveSpeed == 1)  tripRating -= 1
+            if (countOfEmergencyDown == 1) tripRating -= 1
+            if (countOfExcessiveSpeed > 1)  tripRating -= 2
+            if (countOfEmergencyDown > 1)  tripRating -= 2
 
             // rewards
             if (averageSpeed < 35) tripRating += 1
             if (countExcessiveOver20 in 0 .. 1) tripRating += 1
-            if (countOfEmergencyDown in 0 .. 1) tripRating += 1
-            if (countOfExcessiveSpeed == 0) tripRating += 1
+            if (countOfExcessiveSpeed == 0 || countOfEmergencyDown == 0) tripRating += 1
 
             viewModel.updateTripRating(tripRating)
 
