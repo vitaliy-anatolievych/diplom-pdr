@@ -296,7 +296,7 @@ class TaskScreen : Fragment() {
             }
         }
 
-        if (isRandQuestions && testIsEnded && !isQuestionOfDay) {
+        if (isRandQuestions && testIsEnded) {
             val today = Calendar.getInstance()
             today.add(Calendar.DAY_OF_YEAR, 1)
 
